@@ -11,7 +11,7 @@ Early development.
 Current milestone:
 
 ```text
-M01 — PWS002 end-to-end
+M02 — Scanner behavior and errors
 ```
 
 The first implemented rule is:
@@ -133,6 +133,15 @@ Show the installed version:
 playwright-lint --version
 ```
 
+Scanner behavior in v0.1:
+
+- no path means scan the current directory;
+- directories are scanned recursively;
+- files without `.py` are ignored without error;
+- `.py` files are read as UTF-8;
+- parse/read errors are reported without stopping the whole scan;
+- default technical directories are skipped during recursive directory scans.
+
 ## Exit codes
 
 ```text
@@ -140,6 +149,9 @@ playwright-lint --version
 1 = findings found
 2 = invalid usage / parse error / read error / internal error
 ```
+
+If at least one file cannot be parsed or read, the final exit code is `2`.
+This also wins over findings, because the scan result is incomplete.
 
 ## Implemented rules
 
