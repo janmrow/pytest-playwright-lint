@@ -14,6 +14,8 @@ Added so far:
 - Add first AST rule: `PWS002` for `page.wait_for_timeout()`.
 - Add text reporting for findings.
 - Add CLI, scanner, and rule tests.
+- Test scanner behavior for missing paths, non-Python files, default exclusions, parse errors, read errors, and deterministic ordering.
+- Test CLI error precedence when parse/read/input errors occur.
 
 Planned v0.1 scope:
 
