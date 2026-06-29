@@ -11,13 +11,15 @@ Early development.
 Current milestone:
 
 ```text
-M03 — PWS001 time.sleep()
+M04 — PWS003 networkidle
 ```
 
-The first implemented rule is:
+Implemented rules:
 
 ```text
+PWS001 Avoid time.sleep() in Playwright tests; prefer a locator assertion or a specific wait condition.
 PWS002 Avoid page.wait_for_timeout(); prefer a locator assertion or a specific wait condition.
+PWS003 Avoid wait_for_load_state("networkidle"); prefer a locator assertion or a specific application condition.
 ```
 
 ## Why this exists
@@ -155,15 +157,47 @@ This also wins over findings, because the scan result is incomplete.
 
 ## Implemented rules
 
-```text
-PWS001 Avoid time.sleep() in Playwright tests; prefer a locator assertion or a specific wait condition.
-PWS002 Avoid page.wait_for_timeout(); prefer a locator assertion or a specific wait condition.
-```
+### PWS001 — `time.sleep()`
 
 Detects:
 
 ```python
-page.wait_for_timeout(3000)
+import time
+
+
+def test_login(page):
+    page.goto("/login")
+    time.sleep(3)
+```
+
+Message:
+
+```text
+PWS001 Avoid time.sleep() in Playwright tests; prefer a locator assertion or a specific wait condition.
+```
+
+Rationale:
+
+- fixed sleeps wait for time, not for application state;
+- they make tests slower;
+- they can hide missing synchronization;
+- they can increase flaky behavior.
+
+Scope in v0.1:
+
+```text
+Detects only time.sleep(...).
+Does not detect unqualified sleep(...).
+```
+
+### PWS002 — `page.wait_for_timeout()`
+
+Detects:
+
+```python
+def test_login(page):
+    page.goto("/login")
+    page.wait_for_timeout(3000)
 ```
 
 Message:
@@ -178,3 +212,40 @@ Rationale:
 - they often make tests slower;
 - they can hide missing synchronization;
 - they can increase flaky behavior.
+
+### PWS003 — `wait_for_load_state("networkidle")`
+
+Detects:
+
+```python
+def test_dashboard(page):
+    page.goto("/dashboard")
+    page.wait_for_load_state("networkidle")
+```
+
+Also detects:
+
+```python
+def test_dashboard(page):
+    page.goto("/dashboard")
+    page.wait_for_load_state(state="networkidle")
+```
+
+Message:
+
+```text
+PWS003 Avoid wait_for_load_state("networkidle"); prefer a locator assertion or a specific application condition.
+```
+
+Rationale:
+
+- `networkidle` can be an unreliable signal for modern web apps;
+- background requests, analytics, polling, websockets, or delayed requests can make it noisy;
+- tests should usually wait for a user-visible condition or a specific application state.
+
+Scope in v0.1:
+
+```text
+Detects method calls named wait_for_load_state with "networkidle" as the first positional argument or state keyword.
+Does not verify that the receiver is a Playwright Page object.
+```

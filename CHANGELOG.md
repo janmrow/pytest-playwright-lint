@@ -13,6 +13,7 @@ Added so far:
 - Add exit code constants.
 - Add first AST rule: `PWS002` for `page.wait_for_timeout()`.
 - Add second AST rule: `PWS001` for `time.sleep()`.
+- Add third AST rule: `PWS003` for `wait_for_load_state("networkidle")`.
 - Add text reporting for findings.
 - Add CLI, scanner, and rule tests.
 - Test scanner behavior for missing paths, non-Python files, default exclusions, parse errors, read errors, and deterministic ordering.
