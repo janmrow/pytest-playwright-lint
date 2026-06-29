@@ -68,6 +68,29 @@ def test_cli_reports_pws002_finding() -> None:
     ) == result.output
 
 
+def test_cli_reports_pws003_finding() -> None:
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        with open("test_bad.py", "w", encoding="utf-8") as file:
+            file.write(
+                dedent(
+                    """
+                    def test_dashboard(page):
+                        page.wait_for_load_state("networkidle")
+                    """
+                ).lstrip()
+            )
+
+        result = runner.invoke(main, ["test_bad.py"])
+
+    assert result.exit_code == EXIT_FINDINGS
+    assert (
+        'test_bad.py:2:5 PWS003 Avoid wait_for_load_state("networkidle"); '
+        "prefer a locator assertion or a specific application condition.\n"
+    ) == result.output
+
+
 def test_cli_defaults_to_current_directory() -> None:
     runner = CliRunner()
 
