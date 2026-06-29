@@ -19,6 +19,32 @@ def test_cli_reports_no_findings_for_clean_file() -> None:
     assert result.output == "No findings.\n"
 
 
+def test_cli_reports_pws001_finding() -> None:
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        with open("test_bad.py", "w", encoding="utf-8") as file:
+            file.write(
+                dedent(
+                    """
+                    import time
+
+
+                    def test_login(page):
+                        time.sleep(3)
+                    """
+                ).lstrip()
+            )
+
+        result = runner.invoke(main, ["test_bad.py"])
+
+    assert result.exit_code == EXIT_FINDINGS
+    assert (
+        "test_bad.py:5:5 PWS001 Avoid time.sleep() in Playwright tests; prefer "
+        "a locator assertion or a specific wait condition.\n"
+    ) == result.output
+
+
 def test_cli_reports_pws002_finding() -> None:
     runner = CliRunner()
 

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from playwright_lint.finding import Finding
-from playwright_lint.rules import no_wait_for_timeout
+from playwright_lint.rules import no_time_sleep, no_wait_for_timeout
 
 DEFAULT_EXCLUDED_DIRS = frozenset(
     {
@@ -24,7 +24,10 @@ DEFAULT_EXCLUDED_DIRS = frozenset(
 
 RuleCheck = Callable[[ast.AST, Path], list[Finding]]
 
-ALL_RULES: tuple[RuleCheck, ...] = (no_wait_for_timeout.check,)
+ALL_RULES: tuple[RuleCheck, ...] = (
+    no_time_sleep.check,
+    no_wait_for_timeout.check,
+)
 
 
 @dataclass(frozen=True)

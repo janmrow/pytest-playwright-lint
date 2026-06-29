@@ -11,7 +11,7 @@ Early development.
 Current milestone:
 
 ```text
-M02 — Scanner behavior and errors
+M03 — PWS001 time.sleep()
 ```
 
 The first implemented rule is:
@@ -155,7 +155,10 @@ This also wins over findings, because the scan result is incomplete.
 
 ## Implemented rules
 
-### PWS002 — `page.wait_for_timeout()`
+```text
+PWS001 Avoid time.sleep() in Playwright tests; prefer a locator assertion or a specific wait condition.
+PWS002 Avoid page.wait_for_timeout(); prefer a locator assertion or a specific wait condition.
+```
 
 Detects:
 
